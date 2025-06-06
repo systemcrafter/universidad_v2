@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/user_model.dart';
 
 class LoginController {
   static const String _baseUrl =
@@ -28,13 +29,14 @@ class LoginController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final token = data['accessToken'];
-        final user = data['user'];
+        final userData = data['user'];
+        final user = User.fromJson(userData);
 
         debugPrint('Token login: $token');
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
-        await prefs.setString('user_name', user['name']);
+        await prefs.setString('user_name', user.name);
 
         return {
           'success': true,
