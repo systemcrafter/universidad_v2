@@ -4,6 +4,7 @@ import 'login_screen.dart';
 import 'profile_screen.dart';
 import 'approved_screen.dart';
 import 'pending_screen.dart';
+import 'courses_screen.dart';
 import '../controllers/logout_controller.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -83,6 +84,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                );
+              },
+            ),
+            _buildButton(
+              icon: Icons.book_outlined,
+              label: 'Materias',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CoursesScreen()),
                 );
               },
             ),
