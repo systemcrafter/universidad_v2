@@ -1,7 +1,6 @@
-// courses_screen.dart
 import 'package:flutter/material.dart';
 import '../controllers/courses_controller.dart';
-import '../models/materia_model.dart'; // Importa tu modelo
+import '../models/materia_model.dart';
 
 class CoursesScreen extends StatefulWidget {
   const CoursesScreen({super.key});
@@ -30,8 +29,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
     final result = await CoursesController.getMaterias();
 
     if (result['success']) {
+      final materias = result['materias'] as List<Materia>;
       setState(() {
-        _materias = result['materias'] as List<Materia>;
+        _materias = materias;
         _isLoading = false;
       });
     } else {
@@ -42,12 +42,37 @@ class _CoursesScreenState extends State<CoursesScreen> {
     }
   }
 
+  void _showMateriaDialog(BuildContext context, Materia materia) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('📘 ${materia.nombre}',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Código: ${materia.codigo}'),
+            Text('Créditos: ${materia.creditos}'),
+            Text('Requisito: ${materia.requisito}'),
+            Text('Estado: ${materia.estado}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Materias'),
-      ),
+      appBar: AppBar(title: const Text('Materias')),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
@@ -59,40 +84,50 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 )
               : _materias.isEmpty
                   ? const Center(child: Text('No hay materias disponibles.'))
-                  : SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: DataTable(
-                        columns: const <DataColumn>[
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Código',
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold),
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: _materias.length,
+                      itemBuilder: (context, index) {
+                        final materia = _materias[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () => _showMateriaDialog(context, materia),
+                              child: Card(
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        materia.codigo,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        materia.nombre,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                          DataColumn(
-                            label: Expanded(
-                              child: Text(
-                                'Nombre de la Materia',
-                                style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ],
-                        rows: _materias.map<DataRow>((materia) {
-                          return DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text(materia.codigo)),
-                              DataCell(Text(materia.nombre)),
-                            ],
-                          );
-                        }).toList(),
-                      ),
+                        );
+                      },
                     ),
       floatingActionButton: FloatingActionButton(
         onPressed: _fetchMaterias,

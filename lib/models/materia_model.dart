@@ -25,4 +25,18 @@ class Materia {
       estado: json['estado'],
     );
   }
+
+  @override
+  String toString() {
+    return '''
+Materia {
+  id: $id,
+  código: $codigo,
+  nombre: $nombre,
+  créditos: $creditos,
+  requisito: $requisito,
+  estado: $estado
+}
+''';
+  }
 }
