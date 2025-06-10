@@ -1,3 +1,4 @@
+//logout_controller.dart
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,12 +7,17 @@ class LogoutController {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      final token = prefs.getString('auth_token'); // clave correcta
+      final token = prefs.getString('auth_token');
       debugPrint('Token logout: $token');
 
-      await prefs.clear();
+      // Limpieza selectiva: solo elimina el token
+      await prefs.remove('auth_token');
+      await prefs.remove('user_name');
+      debugPrint('Datos borrados correctamente');
+
       return true;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Error al hacer logout: $e');
       return false;
     }
   }
