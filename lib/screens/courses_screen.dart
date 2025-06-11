@@ -10,6 +10,9 @@ class CoursesScreen extends StatefulWidget {
 }
 
 class _CoursesScreenState extends State<CoursesScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  List<Materia> _allMaterias = [];
   List<Materia> _materias = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -18,6 +21,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
   void initState() {
     super.initState();
     _fetchMaterias();
+
+    _searchController.addListener(_filterMaterias);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchMaterias() async {
@@ -31,6 +42,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
     if (result['success']) {
       final materias = result['materias'] as List<Materia>;
       setState(() {
+        _allMaterias = materias;
         _materias = materias;
         _isLoading = false;
       });
@@ -40,6 +52,18 @@ class _CoursesScreenState extends State<CoursesScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  void _filterMaterias() {
+    final query = _searchController.text.toLowerCase();
+
+    setState(() {
+      _materias = _allMaterias
+          .where((materia) =>
+              materia.nombre.toLowerCase().contains(query) ||
+              materia.codigo.toLowerCase().contains(query))
+          .toList();
+    });
   }
 
   void _showMateriaDialog(BuildContext context, Materia materia) {
@@ -82,53 +106,76 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     style: const TextStyle(color: Colors.red),
                   ),
                 )
-              : _materias.isEmpty
-                  ? const Center(child: Text('No hay materias disponibles.'))
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      itemCount: _materias.length,
-                      itemBuilder: (context, index) {
-                        final materia = _materias[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12.0),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: () => _showMateriaDialog(context, materia),
-                              child: Card(
-                                elevation: 2,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        materia.codigo,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+              : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Buscar materia',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: _materias.isEmpty
+                          ? const Center(
+                              child: Text('No hay materias disponibles.'))
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(16.0),
+                              itemCount: _materias.length,
+                              itemBuilder: (context, index) {
+                                final materia = _materias[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12.0),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(12),
+                                      onTap: () =>
+                                          _showMateriaDialog(context, materia),
+                                      child: Card(
+                                        elevation: 2,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 12),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                materia.codigo,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                materia.nombre,
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        materia.nombre,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             ),
-                          ),
-                        );
-                      },
                     ),
+                  ],
+                ),
       floatingActionButton: FloatingActionButton(
         onPressed: _fetchMaterias,
         child: const Icon(Icons.refresh),
