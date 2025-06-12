@@ -1,42 +1,37 @@
 //main.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/register_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/approved_screen.dart';
+import 'screens/pending_screen.dart';
+import 'screens/courses_screen.dart';
+import 'screens/splash_router.dart'; // Nuevo archivo
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<Widget> _getInitialScreen() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-
-    if (token != null && token.isNotEmpty) {
-      return const HomeScreen();
-    } else {
-      return const LoginScreen();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Universidad',
       debugShowCheckedModeBanner: false,
-      home: FutureBuilder<Widget>(
-        future: _getInitialScreen(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return snapshot.data!;
-          } else {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-        },
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashRouter(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/courses': (context) => const CoursesScreen(),
+        '/approved': (context) => const ApprovedScreen(),
+        '/pending': (context) => const PendingCoursesScreen(),
+      },
     );
   }
 }
