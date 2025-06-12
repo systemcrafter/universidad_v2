@@ -1,7 +1,7 @@
-// login_controller.dart
+//login_controller.dart
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 
@@ -29,11 +29,25 @@ class LoginController {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        if (data == null || data is! Map<String, dynamic>) {
+          return {
+            'success': false,
+            'message': 'Respuesta inválida del servidor.',
+          };
+        }
+
         final token = data['accessToken'];
         final userData = data['user'];
-        final user = User.fromJson(userData);
 
-        debugPrint('Token login: $token');
+        if (token == null || userData == null) {
+          return {
+            'success': false,
+            'message':
+                'No se pudo iniciar sesión. Verifica tus credenciales e inténtalo de nuevo.',
+          };
+        }
+
+        final user = User.fromJson(userData);
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
@@ -48,19 +62,23 @@ class LoginController {
       } else if (response.statusCode == 401) {
         return {
           'success': false,
-          'message': 'Credenciales incorrectas',
+          'message': 'Credenciales incorrectas. Inténtalo de nuevo.',
         };
       } else {
+        final errorMsg = jsonDecode(response.body)?['message'] ??
+            'Error inesperado del servidor (${response.statusCode})';
         return {
           'success': false,
-          'message': 'Error inesperado (${response.statusCode})',
+          'message': errorMsg,
         };
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Error en login: $e');
+      debugPrintStack(stackTrace: stackTrace);
       return {
         'success': false,
-        'message': 'Error de conexión: $e',
+        'message':
+            'Ocurrió un error al intentar iniciar sesión. Por favor, intenta más tarde.',
       };
     }
   }
