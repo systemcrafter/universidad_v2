@@ -1,7 +1,7 @@
-// profile_screen.dart
+//profiile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../controllers/profile_controller.dart';
-import '../models/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,6 +14,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   bool _isLoading = true;
   bool _isSaving = false;
@@ -31,14 +32,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _errorMessage = null;
     });
 
-    final result = await UserController.getUser();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final name = prefs.getString('user_name') ?? '';
+      final email = prefs.getString('user_email') ?? '';
 
-    if (result['success']) {
-      final user = result['user'] as User;
-      _nameController.text = user.name;
-      _emailController.text = user.email;
-    } else {
-      _errorMessage = result['message'];
+      _nameController.text = name;
+      _emailController.text = email;
+      _passwordController.text = ''; // Se deja vacío por seguridad
+    } catch (e) {
+      _errorMessage = 'Error al cargar los datos del usuario.';
     }
 
     setState(() {
@@ -56,6 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final result = await UserController.updateUser(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
     );
 
     setState(() {
@@ -112,6 +116,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               : (!value.contains('@')
                                   ? 'Correo inválido'
                                   : null),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _passwordController,
+                          decoration:
+                              const InputDecoration(labelText: 'Contraseña'),
+                          obscureText: true,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Campo requerido'
+                              : null,
                         ),
                         const SizedBox(height: 32),
                         SizedBox(

@@ -37,7 +37,8 @@ class LoginController {
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
-        await prefs.setString('user_name', user.name);
+        await prefs.setString('user_name', user.name ?? '');
+        await prefs.setString('user_email', user.email ?? '');
 
         return {
           'success': true,
