@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Image.asset('assets/images/logo.png', height: 100),
+            Image.asset('assets/images/logo.png', height: 150),
             const SizedBox(height: 24),
             _buildButton(
               icon: Icons.person_outline,
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const ApprovedCourses()),
+                  MaterialPageRoute(builder: (_) => const ApprovedScreen()),
                 );
               },
             ),
