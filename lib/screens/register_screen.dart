@@ -94,7 +94,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
-                  // Validación simple de correo electrónico
                   if (value == null || value.isEmpty) {
                     return 'Ingresa tu correo';
                   }
@@ -120,8 +119,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(50)),
                   ),
                 ),
-                validator: (value) =>
-                    value!.isEmpty ? 'Ingresa tu contraseña' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ingresa tu contraseña';
+                  } else if (value.length < 8) {
+                    return 'La contraseña debe tener al menos 8 caracteres';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
               ElevatedButton(
