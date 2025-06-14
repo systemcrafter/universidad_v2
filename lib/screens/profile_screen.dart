@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Perfil'),
-        backgroundColor: const Color(0xFF27D1C3),
+        backgroundColor: const Color(0xFF4A90E2),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       children: [
                         const Icon(Icons.person,
-                            size: 100, color: Color(0xFF27D1C3)),
+                            size: 100, color: Color(0xFF4A90E2)),
                         const SizedBox(height: 20),
                         TextFormField(
                           controller: _nameController,
@@ -142,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             label: const Text('Guardar Cambios'),
                             onPressed: _isSaving ? null : _updateUserData,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF27D1C3),
+                              backgroundColor: const Color(0xFF4A90E2),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                           ),

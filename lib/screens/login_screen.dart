@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: constraints.maxHeight * 0.1),
                   Image.asset(
                     'assets/images/logo.png',
-                    height: 100,
+                    height: 140,
                   ),
                   SizedBox(height: constraints.maxHeight * 0.1),
                   Text(
@@ -83,7 +83,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: constraints.maxHeight * 0.05),
                   if (_error != null)
-                    Text(_error!, style: const TextStyle(color: Colors.red)),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.error_outline, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _error!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   Form(
                     key: _formKey,
                     child: Column(
@@ -130,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: _isLoading ? null : _handleLogin,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            backgroundColor: const Color(0xFF27d1c3),
+                            backgroundColor: const Color(0xFF4A90E2),
                             foregroundColor: Colors.white,
                             minimumSize: const Size(double.infinity, 48),
                             shape: const StadiumBorder(),
@@ -143,9 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16.0),
                         TextButton(
-                          onPressed: () {
-                            // Implementar recuperación si aplica
-                          },
+                          onPressed: () {},
                           child: Text(
                             '¿Olvidaste tu contraseña?',
                             style: Theme.of(context)
@@ -174,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: [
                                 TextSpan(
                                   text: " Regístrate",
-                                  style: TextStyle(color: Color(0xff27d1c3)),
+                                  style: TextStyle(color: Color(0xFF4A90E2)),
                                 ),
                               ],
                             ),

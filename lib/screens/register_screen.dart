@@ -52,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro'),
-        backgroundColor: const Color(0xFF27D1C3),
+        backgroundColor: const Color(0xFF4A90E2),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -127,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ElevatedButton(
                 onPressed: _isLoading ? null : _handleRegister,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF27D1C3),
+                  backgroundColor: const Color(0xFF4A90E2),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 48),
                   shape: const StadiumBorder(),
